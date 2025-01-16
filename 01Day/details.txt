@@ -1,0 +1,9 @@
+// Init a backend project then you have to execute the below command.
+
+npm init/
+npm init --y
+
+
+// npm --> Node Package Manager
+// utility --> Function 
+// entry point --> file execute karega entire backend ko

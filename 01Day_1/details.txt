@@ -1,0 +1,15 @@
+main folders,
+
+1. public - Handling static files like images, videos, pdfs, etc.
+2. src - db connection, backend logics.
+
+
+
+
+src,
+1. database - define database connection
+2. models - data ka models define karenge
+3. controller - logics(functions)
+4. route - end point (/login, /logout, /profile)
+5. utils - external functionalities
+6. middleware - authentication
