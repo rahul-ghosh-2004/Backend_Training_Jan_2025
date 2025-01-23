@@ -2,28 +2,12 @@ import express from "express"
 
 const app = express()
 
-// app.get("/", (req, res) => {
-//     return res
-//     .status(200)
-//     .json({
-//         "message": "Welcome to CODEXINTERN!"
-//     })
-// })
+app.use(express.json())
 
-// app.get("/login", (req, res) => {
-//     return res
-//     .status(200)
-//     .json({
-//         "message": "Welcome to Login Page"
-//     })
-// })
+import userRoute from "./routes/user.route.js"
 
-// app.get("/profile", (req, res) => {
-//     return res
-//     .status(200)
-//     .json({
-//         "message": "Welcome to Profile Page"
-//     })
-// })
+app.use("/api/v1/user", userRoute)
+
+// http://localhost:3000/api/v1/user
 
 export default app
