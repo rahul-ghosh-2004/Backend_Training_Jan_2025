@@ -1,43 +1,89 @@
 import HandleError from "../utils/HandleError.js";
 import HandleResponse from "../utils/HandleResponse.js";
+import User from "../models/user.model.js";
 
+const register = async (req, res) => {
+    // req object --> req.body
+    // req.file / req.files ---> We can grab file/files like image, video, etc from req.file/files
 
-// login api
-// login api url ---> http://localhost:3000/api/v1/user/login
-const login = async (req, res) => {
-    const DBData = {
-        username: "user123",
-        password: "1234"
+    const { name, phone, email } = req.body
+
+    if (!name || !phone || !email) {
+        return res
+            .status(400)
+            .json(
+                new HandleError(400, "All fields are required!")
+            )
     }
 
-    const { username, password } = req.body  // body object ---> text data ka access milta hai
-
-    if (username !== DBData.username) {
+    if (name?.trim() === "") {
         return res
-        .status(400)
-        .json(
-            new HandleError(404, "Invalid username!")
+            .status(400)
+            .json(
+                new HandleError(400, "Name shouldn't be empty!")
+            )
+    }
+
+    if (phone?.trim()?.length !== 10) {
+        return res
+            .status(400)
+            .json(
+                new HandleError(400, "Invalid mobile number!")
+            )
+    }
+
+    if (!/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(email?.trim())) {
+        return res
+            .status(400)
+            .json(
+                new HandleError(400, "Provided E-Mail id is invalid!")
         )
     }
 
-    if (password !== DBData.password) {
+    const isExistedUser = await User.findOne({
+        $or: [
+            {
+                email: email?.trim()
+            }, 
+            {
+                phone: phone?.trim()
+            }
+        ]
+    })
+
+    if (isExistedUser) {
         return res
         .status(400)
         .json(
-            new HandleError(404, "Invalid password!")
+            new HandleError(400, "Existed user! Please go for login!")
+        )
+    }
+
+    const user = await User.create({
+        name: name?.trim(),
+        phone: Number(phone?.trim()),
+        email: email?.trim()?.toLowerCase()
+    })
+
+    const createdUser = await User.findById(user._id)
+
+    if (!createdUser) {
+        return res
+        .status(500)
+        .json(
+            new HandleError(500, "Something went wrong!")
         )
     }
 
     return res
-    .status(200)
+    .status(201)  // 201 --> Kuch create kiya hai
     .json(
-        new HandleResponse(200, { message: "Valid credentials!" }, "Login successful!")
+        new HandleResponse(200, createdUser, "User profile created successfully!")
     )
-
-    // We will take some inputs from user (username, password)
-    // check them 
 }
 
+
+
 export {
-    login
+    register
 }
